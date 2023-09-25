@@ -1,5 +1,5 @@
 
-import { NavLink} from "react-router-dom";
+import { Form, NavLink, useNavigate, useSearchParams} from "react-router-dom";
 import { useState } from "react";
 import { useForm } from "react-hook-form";
 import { yupResolver } from "@hookform/resolvers/yup";
@@ -8,6 +8,8 @@ import Input from "../Input";
 import CustomButton from "../CustomButton";
 import logo from './../../images/CP-Logo.png';
 import dishes from './../../images/dishes.png'
+import { createUserWithEmailAndPassword, signInWithEmailAndPassword} from "firebase/auth";
+import { auth } from "../../auth/firebase-auth";
 
 
 const valid = yup.object({
@@ -15,12 +17,16 @@ const valid = yup.object({
 		.string()
 		.required("Enter corrent email")
 		.email("email is not valid"),
-	password: yup.string().required("Enter your password."),
+	password: yup.string().min(6, "Password must by at least 6 characters"),
+	confirmPassword: yup.string().oneOf([yup.ref("password")], "Password must by match!"),
 });
 
 const Account = () => {
 	const [error, setError] = useState<string>("");
-	const [changeForm, setChangeForm] = useState<boolean>(true);
+	// const [changeForm, setChangeForm] = useState<boolean>(true);
+	const [searchParams] = useSearchParams()
+	const isLogin = searchParams.get('mode') === 'login'
+	const navigate = useNavigate();
 
 	const {
 		register,
@@ -31,8 +37,21 @@ const Account = () => {
 		resolver: yupResolver(valid),
 	});
 
-	const handleChangeForm = () => {
-		setChangeForm(!changeForm);
+	
+	const formSubmit = async (data: any, event: any)  => {
+		event.preventDefault();
+		console.log(data)
+
+		try{
+			if(isLogin){
+				const user = await signInWithEmailAndPassword(auth, data.email, data.password)
+			}else {
+				const user = await createUserWithEmailAndPassword(auth, data.email, data.confirmPassword)
+			}
+		navigate('/')
+		} catch(error: any){
+			alert(error.message)
+		}
 	};
 
 	return (
@@ -52,16 +71,16 @@ const Account = () => {
 						alt="logo"
 						className="my-8 object-contain w-[150px] h-[50px]"
 					/>
-					{changeForm ? (
+					{isLogin ? (
 						<h2 className="text-3xl pb-4">Log IN</h2>
 					) : (
 						<h2 className="text-3xl pb-4">Create an account</h2>
 					)}
 
 					<div>
-						<form
+						<form	
 							className="flex flex-col gap-4"
-							// onSubmit={handleSubmit(logIn)}
+							onSubmit={handleSubmit(formSubmit)}
 						>
 							<Input
 								id="email"
@@ -79,27 +98,27 @@ const Account = () => {
 								register={{ ...register("password") }}
 								errorMsg={errors.password?.message}
 							/>
-							{!changeForm && (
+							{!isLogin && (
 								<Input
 									id="confirmpassword"
 									label="Confirm password"
 									placeholder="Confirm your password"
 									type="password"
-									register={{ ...register("password") }}
-									errorMsg={errors.password?.message}
+									register={{ ...register("confirmPassword") }}
+									errorMsg={errors.confirmPassword?.message}
 								/>
 							)}
 							<p style={{ color: "red" }}>{error && error}</p>
 							<CustomButton
 								icon=""
 								disabled={!isValid}
-								title={changeForm ? "Log in" : 'Sign in'}
+								title={isLogin ? "Log in" : 'Sign in'}
 								type="submit"
 								style="my-2 block ml-auto"
 							/>
 
 							<div className="flex flex-col">
-								{changeForm && (
+								{isLogin && (
 									<div className="self-center">
 										<NavLink
 											className="text-xs underline hover:text-[#84BD00]"
@@ -112,13 +131,13 @@ const Account = () => {
 
 								<div className="self-center">
 									<p className="text-xs">
-										{changeForm ? `Don't have an account?` : `Do you have an account?`}
+										{isLogin ? `Don't have an account?` : `Do you have an account?`}
 										<NavLink
-											onClick={handleChangeForm}
+											
 											className="text-xs underline hover:text-[#84BD00]"
-											to="#"
+											to={`?mode=${isLogin ? 'signup' : 'login'}`}
 										>
-											{changeForm ? `Join now` : `Log in `}
+											{isLogin ? `Join now` : `Log in `}
 										</NavLink>
 									</p>
 								</div>
@@ -134,3 +153,6 @@ const Account = () => {
 };
 
 export default Account;
+
+
+//poprawic typescript

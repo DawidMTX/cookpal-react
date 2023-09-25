@@ -45,7 +45,7 @@ const NavBar = () => {
 				<SearchBar />
 				{!logged ? (
 					<button className="hidden md:block rounded-full cursor-pointer border border-[#D9D9D9]  hover:border-[#84BD00] outline-none h-11 px-6 ">
-						<Link to="/account">Log In</Link>
+						<Link to="/account?mode=login">Log In</Link>
 					</button>
 				) : (
 					<LoginMenu />
