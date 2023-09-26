@@ -1,5 +1,5 @@
 import React, { useState } from "react";
-import { Link, useNavigate, useSearchParams } from "react-router-dom";
+import { NavLink, Link, useNavigate, useSearchParams } from "react-router-dom";
 import { IconContext } from "react-icons";
 import { AiOutlineMenu } from "react-icons/ai";
 import { GrClose } from "react-icons/gr";
@@ -8,13 +8,15 @@ import { BsSearch } from "react-icons/bs";
 import { FiFilter } from "react-icons/fi";
 import { BiHomeAlt2 } from "react-icons/bi";
 import SearchIcon from "@mui/icons-material/Search";
+import { useAuthState } from "react-firebase-hooks/auth";
+import { auth } from "../../auth/firebase-auth";
 
 const MobileMenu = () => {
 	const [sidebar, setSidebar] = useState(false);
 	const [nameMeal, setNameMeal] = useState<string>("");
 	const [isVisible, setIsVisible] = useState<boolean>(false);
 	const [searchParams, setSearchParams] = useSearchParams("");
-
+	const [user] = useAuthState(auth);
 	const navigate = useNavigate();
 
 	const handleSearch = (e: React.FormEvent<HTMLFormElement>) => {
@@ -76,15 +78,15 @@ const MobileMenu = () => {
 							className="menu-btn"
 							onClick={showSidebar}
 						>
-							<Link
+							<NavLink
 								to="/account"
 								className="no-underline text-[#151414] text-lg w-11/12 h-full flex items-center px-4 hover:text-white"
 							>
 								<div className="hover:ml-4 flex gap-3">
 									<MdAccountCircle className="h-8 w-8" />
-									<p className="text-2xl">Login / My account</p>
+									{user ? <p className="text-2xl">My account</p> : <p className="text-2xl">Login</p>}
 								</div>
-							</Link>
+							</NavLink>
 						</li>
 
 						<li className="menu-btn">

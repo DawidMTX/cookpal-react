@@ -48,7 +48,6 @@ const Hero = () => {
 	}, [url, search]);
 
 	const handleClick = (getId: string) => {
-		console.log(getId);
 		const id = getId.slice(getId.lastIndexOf("/") + 1, getId.lastIndexOf("?"));
 		navigate(`/detail/${id}`);
 		console.log(id);

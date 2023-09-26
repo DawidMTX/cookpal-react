@@ -6,6 +6,7 @@ import DetailPage, {
 } from "./components/pages/DetailPage";
 import ErrorPage from "./components/pages/ErrorPage";
 import AccountPage from "./components/pages/AccountPage";
+import CreateAccount from "./components/pages/CreateAccount";
 
 const routers = createBrowserRouter([
 	{
@@ -19,9 +20,10 @@ const routers = createBrowserRouter([
 				element: <DetailPage />,
 				loader: detailLoader,
 			},
+			{path: "/account", element: <AccountPage />}
 		],
 	},
-	{ path: "/account", element: <AccountPage /> },
+	{ path: "/createaccount", element: <CreateAccount/> },
 ]);
 
 function App() {

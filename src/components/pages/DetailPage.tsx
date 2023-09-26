@@ -1,14 +1,13 @@
-import { NavLink, useLoaderData, useParams } from "react-router-dom";
+import { NavLink, useLoaderData, useParams, useSearchParams } from "react-router-dom";
 import AccessTimeIcon from "@mui/icons-material/AccessTime";
 import FormatListNumberedIcon from "@mui/icons-material/FormatListNumbered";
 import { Chart as ChartJS, ArcElement, Tooltip, Legend } from "chart.js/auto";
 import { Doughnut } from "react-chartjs-2";
 import { useEffect, useState } from "react";
-import { request } from "http";
-import { isVisible } from "@testing-library/user-event/dist/utils";
 import CustomButton from "../CustomButton";
 import FavoriteIcon from "@mui/icons-material/Favorite";
 import FavoriteBorderIcon from "@mui/icons-material/FavoriteBorder";
+
 
 ChartJS.register(ArcElement, Tooltip, Legend);
 
@@ -49,7 +48,10 @@ interface ParamsTypes {
 	params: any;
 }
 
-const DetailPage = () => {
+const DetailPage = ( ) => {
+	const [clicked, setClicked] = useState<boolean>(false);
+	const searchParams = useSearchParams();
+
 	const recipeData = useLoaderData() as RecipesTypes;
 	const {
 		image,
@@ -85,6 +87,12 @@ const DetailPage = () => {
 		],
 	};
 
+	const handleAddFavorite = () => {
+		setClicked(true);
+		const id = searchParams
+		console.log(id)
+	}
+
 	return (
 		<main className="w-full flex flex-col  items-center pt-[148px]">
 			<div className="flex flex-col  justify-center max-w-screen-xl  mx-10 my-8">
@@ -119,9 +127,10 @@ const DetailPage = () => {
 									kcal
 								</p>
 								<CustomButton
-									style="items-end "
+									style={`items-end ${clicked && 'border-[#84BD00] text-[#84BD00]'}`}
 									title="Favorite"
-									icon={<FavoriteBorderIcon />}
+									icon={clicked ? <FavoriteIcon /> : <FavoriteBorderIcon />}
+									onClick={handleAddFavorite}
 								/>
 									
 							

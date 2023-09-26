@@ -4,11 +4,15 @@ import Avatar from "@mui/material/Avatar";
 import Menu from "@mui/material/Menu";
 import MenuItem from "@mui/material/MenuItem";
 import IconButton from "@mui/material/IconButton";
+import { useAuthState } from "react-firebase-hooks/auth";
+import { auth } from "../../auth/firebase-auth";
+import { Link } from "react-router-dom";
+import { signOut } from "firebase/auth";
 
 
 export default function AccountMenu() {
 	const [anchorEl, setAnchorEl] = useState<null | HTMLElement>(null);
-	
+	const [user] = useAuthState(auth);
 	const open = Boolean(anchorEl);
 	const handleClick = (event: React.MouseEvent<HTMLElement>) => {
 		setAnchorEl(event.currentTarget);
@@ -16,6 +20,15 @@ export default function AccountMenu() {
 	const handleClose = () => {
 		setAnchorEl(null);
 	};
+
+	const handleLogOut = () => {
+		setAnchorEl(null);
+		signOut(auth).then(() => {
+			console.log("Logged out successfully")
+		}).catch((error) => console.log(error.message))
+	}
+
+	console.log( user?.email)
 	return (
 		<>
 			<Box sx={{ display: "flex", alignItems: "center", textAlign: "center" }}>
@@ -28,7 +41,7 @@ export default function AccountMenu() {
 					aria-expanded={open ? "true" : undefined}
 				>
 					<span className="hidden md:block rounded-full cursor-pointer border border-[#D9D9D9]  hover:border-[#84BD00] outline-none h-11 px-6 leading-[44px]">
-						Log In
+						{user?.email}
 					</span>
 				</IconButton>
 			</Box>
@@ -67,11 +80,13 @@ export default function AccountMenu() {
 				transformOrigin={{ horizontal: "right", vertical: "top" }}
 				anchorOrigin={{ horizontal: "right", vertical: "bottom" }}
 			>
+				<Link to="/account">
 				<MenuItem onClick={handleClose}>
-					<Avatar /> My account
+				<Avatar /> My account
 				</MenuItem>
-				<MenuItem onClick={handleClose}>
-					<Avatar /> Your favorite dishes
+				</Link>
+				<MenuItem onClick={handleLogOut}>
+					<Avatar /> Log Out
 				</MenuItem>
 			</Menu>
 		</>
