@@ -1,4 +1,9 @@
-import { NavLink, useLoaderData, useParams, useSearchParams } from "react-router-dom";
+import {
+	NavLink,
+	useLoaderData,
+	useParams,
+	useSearchParams,
+} from "react-router-dom";
 import AccessTimeIcon from "@mui/icons-material/AccessTime";
 import FormatListNumberedIcon from "@mui/icons-material/FormatListNumbered";
 import { Chart as ChartJS, ArcElement, Tooltip, Legend } from "chart.js/auto";
@@ -7,7 +12,11 @@ import { useEffect, useState } from "react";
 import CustomButton from "../CustomButton";
 import FavoriteIcon from "@mui/icons-material/Favorite";
 import FavoriteBorderIcon from "@mui/icons-material/FavoriteBorder";
-
+import { useDispatch } from "react-redux";
+import { useAppSelector } from "../../store";
+import { collection, addDoc } from "firebase/firestore";
+import { auth, db } from "../../auth/firebase-auth";
+import { useAuthState } from "react-firebase-hooks/auth";
 
 ChartJS.register(ArcElement, Tooltip, Legend);
 
@@ -48,10 +57,10 @@ interface ParamsTypes {
 	params: any;
 }
 
-const DetailPage = ( ) => {
+const DetailPage = () => {
 	const [clicked, setClicked] = useState<boolean>(false);
 	const searchParams = useSearchParams();
-
+	const dispatch = useDispatch();
 	const recipeData = useLoaderData() as RecipesTypes;
 	const {
 		image,
@@ -67,6 +76,7 @@ const DetailPage = ( ) => {
 	const [config, setConfig] = useState<string[]>(["1", "1", "1"]);
 	const [isVisible, setIsVisible] = useState<boolean>(false);
 	const title = label.split(" ").slice(0, 4).toString().replaceAll(",", " ");
+	const [user] = useAuthState(auth);
 
 	useEffect(() => {
 		setConfig([
@@ -89,9 +99,20 @@ const DetailPage = ( ) => {
 
 	const handleAddFavorite = () => {
 		setClicked(true);
-		const id = searchParams
-		console.log(id)
-	}
+		// const fav = { title: label, image: image };
+		// dispatch(addNewFavMeal(fav));
+			const userName = user?.email
+			const docRef =  addDoc(collection(db, `${user?.email}` ), {
+				title: label,
+				image: image,
+			})
+	
+
+	};
+
+
+	
+
 
 	return (
 		<main className="w-full flex flex-col  items-center pt-[148px]">
@@ -127,13 +148,13 @@ const DetailPage = ( ) => {
 									kcal
 								</p>
 								<CustomButton
-									style={`items-end ${clicked && 'border-[#84BD00] text-[#84BD00]'}`}
+									style={`items-end ${
+										clicked && "border-[#84BD00] text-[#84BD00]"
+									}`}
 									title="Favorite"
 									icon={clicked ? <FavoriteIcon /> : <FavoriteBorderIcon />}
 									onClick={handleAddFavorite}
 								/>
-									
-							
 							</div>
 						</div>
 					</div>
@@ -186,7 +207,7 @@ export async function loader({ params }: ParamsTypes) {
 	const id = params.recipeID;
 
 	const repsonse = await fetch(
-		`https://api.edamam.com/api/recipes/v2/${id}?type=public&app_id=7bc664e7&app_key=73b69d6164b604d54087cd76a3a179ae%09`
+		`https://api.edamam.com/api/recipes/v2/${id}?type=public&app_id=${process.env.REACT_APP_API_ID}&app_key=${process.env.REACT_APP_API_KEY}`
 	);
 
 	if (!repsonse.ok) {
@@ -197,5 +218,3 @@ export async function loader({ params }: ParamsTypes) {
 		return data;
 	}
 }
-
-

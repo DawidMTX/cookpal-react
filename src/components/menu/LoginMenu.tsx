@@ -9,7 +9,6 @@ import { auth } from "../../auth/firebase-auth";
 import { Link } from "react-router-dom";
 import { signOut } from "firebase/auth";
 
-
 export default function AccountMenu() {
 	const [anchorEl, setAnchorEl] = useState<null | HTMLElement>(null);
 	const [user] = useAuthState(auth);
@@ -23,19 +22,20 @@ export default function AccountMenu() {
 
 	const handleLogOut = () => {
 		setAnchorEl(null);
-		signOut(auth).then(() => {
-			console.log("Logged out successfully")
-		}).catch((error) => console.log(error.message))
-	}
+		signOut(auth)
+			.then(() => {
+				console.log("Logged out successfully");
+			})
+			.catch(error => console.log(error.message));
+	};
 
-	console.log( user?.email)
 	return (
 		<>
 			<Box sx={{ display: "flex", alignItems: "center", textAlign: "center" }}>
 				<IconButton
 					onClick={handleClick}
 					size="small"
-          sx={	{filter: "drop-shadow(0px 0px 0px rgba(0,0,0,0.32))"}}
+					sx={{ filter: "drop-shadow(0px 0px 0px rgba(0,0,0,0.32))" }}
 					aria-controls={open ? "account-menu" : undefined}
 					aria-haspopup="true"
 					aria-expanded={open ? "true" : undefined}
@@ -81,9 +81,9 @@ export default function AccountMenu() {
 				anchorOrigin={{ horizontal: "right", vertical: "bottom" }}
 			>
 				<Link to="/account">
-				<MenuItem onClick={handleClose}>
-				<Avatar /> My account
-				</MenuItem>
+					<MenuItem onClick={handleClose}>
+						<Avatar /> My account
+					</MenuItem>
 				</Link>
 				<MenuItem onClick={handleLogOut}>
 					<Avatar /> Log Out

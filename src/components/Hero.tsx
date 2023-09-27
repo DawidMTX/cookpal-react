@@ -50,7 +50,7 @@ const Hero = () => {
 	const handleClick = (getId: string) => {
 		const id = getId.slice(getId.lastIndexOf("/") + 1, getId.lastIndexOf("?"));
 		navigate(`/detail/${id}`);
-		console.log(id);
+		
 	};
 
 	return (
