@@ -41,10 +41,10 @@ const CreateAccount: React.FC = () => {
 		resolver: yupResolver(valid),
 	});
 
-	
 	const formSubmit = async (data: any, event: any)  => {
 		event.preventDefault();
 		console.log(data)
+		
 
 		try{
 			if(isLogin){

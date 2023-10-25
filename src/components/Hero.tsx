@@ -5,7 +5,9 @@ import { useEffect, useState } from "react";
 import { useAppSelector } from "../store";
 import { useDispatch } from "react-redux";
 import { useNavigate, useSearchParams } from "react-router-dom";
-import { Cusine, MealTypes } from "../constains";
+import { MealTypes } from "../constains";
+
+
 
 
 const Hero = () => {
